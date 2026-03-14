@@ -18,7 +18,7 @@ window {
     location:                    center;
     anchor:                      center;
     fullscreen:                  false;
-    width:                       390px;
+    width:                       450px;
     x-offset:                    0px;
     y-offset:                    0px;
 
@@ -161,4 +161,3 @@ element-text {
     vertical-align:              0.5;
     horizontal-align:            0.0;
 }
-

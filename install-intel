@@ -73,6 +73,7 @@ PACKAGES_BASE=(
     xrdb
     xdg-user-dirs
     polkit-gnome
+    power-profiles-daemon
 
     # Monitoring
     lm_sensors
