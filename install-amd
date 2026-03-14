@@ -263,7 +263,7 @@ copy_dotfiles() {
 
 setup_services() {
     info "Enabling system services..."
-    local services=(dbus elogind NetworkManager lightdm rtkit polkit)
+    local services=(dbus elogind NetworkManager lightdm rtkit polkit power-profiles-daemon)
     for svc in "${services[@]}"; do
         if [[ -d "/etc/sv/$svc" ]]; then
             [[ ! -L "/var/service/$svc" ]] && sudo ln -s "/etc/sv/$svc" /var/service/ && info "$svc diaktifkan"
