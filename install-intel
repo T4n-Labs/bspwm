@@ -305,7 +305,7 @@ polkit.addRule(function(action, subject) {
     }
 });
 EOF
-    sudo tee /etc/polkit-1/rules.d/50-networkmanager.rules >/dev/null << 'EOF'
+    sudo tee /etc/polkit-1/rules.d/20-networkmanager.rules >/dev/null << 'EOF'
 polkit.addRule(function(action, subject) {
     if (subject.isInGroup("wheel")) {
 
