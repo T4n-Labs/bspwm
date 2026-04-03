@@ -1,6 +1,6 @@
-# Void Linux BSPWM Auto Install Dotfiles
+# T4n OS(Void Linux) BSPWM Auto Install Dotfiles
 
-Script ini digunakan untuk **menginstall dan mengkonfigurasi dotfiles BSPWM secara otomatis** di **Void Linux**.
+Script ini digunakan untuk **menginstall dan mengkonfigurasi dotfiles BSPWM secara otomatis** di **T4n OS(Void Linux)**.
 
 
 ## Cara Install
@@ -12,11 +12,6 @@ git clone https://github.com/t4n-tech/bspwm.git
 cd bspwm
 ```
 
-```
-install-intel  →  intel
-install-amd    →  amd
-```
-
 ## Struktur Project
 
 ```
@@ -24,7 +19,8 @@ config/        → Semua konfigurasi utama
 fonts/         → Nerd Fonts
 themes/        → GTK Themes
 icons/         → Icon theme
-other/         → Tambahan (pipewire, xorg config, dll)
+other/         → pipewire, xorg config, root, .bashrc, resolv.conf
+system/        → elogind & plymouth(Coming Soon)
 install        → Script auto installer
 ```
 
@@ -79,7 +75,7 @@ install        → Script auto installer
 | `Super + 7-9`         | Switch to Workspace Desktop7–9 |
 | `Super + Shift + 1-6` | Move Window to Workspace 1–6   |
 | `Super + Tab`         | Next Workspace                 |
-| `Super + Shift + Tab` | Previous Workspace             |************
+| `Super + Shift + Tab` | Previous Workspace             |
 
 ## Uninstall
 
@@ -97,4 +93,5 @@ rm -rf ~/.config/dunst
 ---
 
 #### Create By
-@[Gh0sT4n](https://github.com/gh0st4n/)
+- @[Gh0sT4n](https://github.com/gh0st4n/)
+- @[T4n-Labs](https://github.com/T4n-Labs/)

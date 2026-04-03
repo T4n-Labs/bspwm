@@ -37,11 +37,10 @@ PACKAGES_BASE=(
     bspwm
     sxhkd
 
-    # Graphics (AMD)
+    # Graphics
     mesa
     mesa-dri
-    mesa-vulkan-radeon
-    vulkan-tools
+    Vulkan-Tools
     linux-firmware
 
     # Network
@@ -66,6 +65,7 @@ PACKAGES_BASE=(
 
     # Utilities
     feh
+    dunst
     brightnessctl
     xss-lock
     betterlockscreen
@@ -73,7 +73,6 @@ PACKAGES_BASE=(
     xrdb
     xdg-user-dirs
     polkit-gnome
-    power-profiles-daemon
 
     # Monitoring
     lm_sensors
@@ -121,6 +120,7 @@ PACKAGES_SERVICES=(
     lightdm
     rtkit
     polkit
+    power-profiles-daemon
 )
 
 PACKAGES_ALL=(
@@ -255,7 +255,7 @@ copy_dotfiles() {
     # Konfigurasi sistem
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
     [[ -f "$SCRIPT_DIR/other/resolv.conf" ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf" /etc/
-    [[ -f "$SCRIPT_DIR/other/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/other/root/logind.conf" /etc/elogind/
+    [[ -f "$SCRIPT_DIR/other/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
     [[ -f "$SCRIPT_DIR/other/root" ]] && sudo cp "$SCRIPT_DIR/other/root/.bashrc" /root/ 2>/dev/null || true
 
     success "Dotfiles are finished being copied and modified."

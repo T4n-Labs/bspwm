@@ -17,7 +17,7 @@ bar() {
     space=""
 
     [ "$filled" -gt 0 ] && bar=$(printf "%0.s=" $(seq 1 $filled))
-    [ "$empty" -gt 0 ] && space=$(printf "%0.s-" $(seq 1 $empty))
+    [ "$empty" -gt 0 ] && space=$(printf "%0.s" $(seq 1 $empty))
 
     echo "$bar$space"
 }
