@@ -10,6 +10,7 @@ Clone repository:
 ```bash
 git clone https://github.com/t4n-tech/bspwm.git
 cd bspwm
+./install
 ```
 
 ## Struktur Project
