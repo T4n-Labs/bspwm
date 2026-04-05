@@ -227,16 +227,6 @@ setup_pipewire() {
     success "PipeWire is configured."
 }
 
-setup_betterlockscreen() {
-    info "Setting up Betterlockscreen..."
-    local wallpaper="$HOME/.config/bspwm/wallpaper/Sinon-2.jpg"
-    if [[ -f "$wallpaper" ]]; then
-        betterlockscreen -u "$wallpaper" --blur 0.8
-    else
-        warn "Wallpaper tidak ditemukan, lewati."
-    fi
-}
-
 copy_dotfiles() {
     info "Copying configuration files..."
 
@@ -256,7 +246,7 @@ copy_dotfiles() {
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
     [[ -f "$SCRIPT_DIR/other/resolv.conf" ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf" /etc/
     [[ -f "$SCRIPT_DIR/other/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
-    [[ -f "$SCRIPT_DIR/other/root" ]] && sudo cp "$SCRIPT_DIR/other/root/.bashrc" /root/ 2>/dev/null || true
+    [[ -f "$SCRIPT_DIR/other/root" ]] && sudo cp "$SCRIPT_DIR/other/.bashrc" /root/ 2>/dev/null || true
 
     success "Dotfiles are finished being copied and modified."
 }
@@ -342,6 +332,16 @@ EOF
     fi
 
     success "Additional configuration is complete."
+}
+
+setup_betterlockscreen() {
+    info "Setting up Betterlockscreen..."
+    local wallpaper="$HOME/.config/bspwm/wallpaper/Void.jpg"
+    if [[ -f "$wallpaper" ]]; then
+        betterlockscreen -u "$wallpaper" --blur 0.8
+    else
+        warn "Wallpaper tidak ditemukan, lewati."
+    fi
 }
 
 final_message() {

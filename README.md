@@ -10,6 +10,7 @@ Clone repository:
 ```bash
 git clone https://github.com/t4n-tech/bspwm.git
 cd bspwm
+chmod +x install
 ./install
 ```
 
@@ -38,6 +39,7 @@ install        → Script auto installer
 | `Super + Shift + y`     | Rofi Monitor Menu              |
 | `Super + e`             | Open **Thunar** (File Manager) |
 | `Super + w`             | Open **Firefox**               |
+| `Super + ALT + Space`   | Clear Notifation Dunst         | 
 | `Print`                 | Flameshot GUI                  |
 | `Super + Shift + s`     | Flameshot GUI (Alternate)      |
 | `Super + Shift + w`     | Open `nmtui` (WiFi Manager)    |
