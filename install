@@ -103,6 +103,10 @@ PACKAGES_BASE=(
     dejavu-fonts-ttf
     noto-fonts-ttf
     noto-fonts-cjk
+
+    # Other
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
 )
 
 PACKAGES_PIPEWIRE=(
