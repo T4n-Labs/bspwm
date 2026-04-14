@@ -231,7 +231,7 @@ setup_pipewire() {
     success "PipeWire is configured."
 }
 
-copy_dotfiles() {
+dotfiles() {
     info "Copying configuration files..."
 
     # Salin folder config
@@ -248,9 +248,13 @@ copy_dotfiles() {
 
     # Konfigurasi sistem
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
+    [[ -d "$SCRIPT_DIR/system/sleek" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /usr/share/grub/themes/
     [[ -f "$SCRIPT_DIR/other/resolv.conf" ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf" /etc/
-    [[ -f "$SCRIPT_DIR/other/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
+    [[ -f "$SCRIPT_DIR/system/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
     [[ -f "$SCRIPT_DIR/other/root" ]] && sudo cp "$SCRIPT_DIR/other/.bashrc" /root/ 2>/dev/null || true
+    
+    info "Menambahkan Konfigurasi Grub Theme..."
+    echo -e "\nGRUB_THEME=\"/usr/share/grub/themes/theme.txt\"" >> /etc/default/grub
 
     success "Dotfiles are finished being copied and modified."
 }
@@ -380,7 +384,7 @@ main() {
     setup_dbus
     create_user_dirs
     setup_pipewire
-    copy_dotfiles
+    dotfiles
     setup_services
     disable_services
     setup_additional
