@@ -2,6 +2,9 @@
 
 Script ini digunakan untuk **menginstall dan mengkonfigurasi dotfiles BSPWM secara otomatis** di **T4n OS(Void Linux)**.
 
+## Grub Theme
+- Repository : [https://github.com/T4n-Labs/Sleek-Themes](https://github.com/T4n-Labs/Sleek-Themes)
+- Varian     : Sleek Dark Theme
 
 ## Cara Install
 
