@@ -70,6 +70,7 @@ PACKAGES_BASE=(
     xss-lock
     betterlockscreen
     i3lock-color
+    ranger
     xrdb
     xdg-user-dirs
     polkit-gnome
