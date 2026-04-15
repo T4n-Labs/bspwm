@@ -89,6 +89,7 @@ PACKAGES_BASE=(
     geany
     timeshift
     xmirror
+    yazi
 
     # Theming
     lxappearance
