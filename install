@@ -78,9 +78,6 @@ PACKAGES_BASE=(
     xdg-user-dirs
     polkit-gnome
     lightdm-gtk-greeter
-    ripgrep
-    tree-sitter
-    tree-sitter-cli
 
     # Monitoring
     lm_sensors
