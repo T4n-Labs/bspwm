@@ -9,9 +9,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-info()  { echo -e "${BLUE}[INFO]${NC} $*"; }
-warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
-error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+info()    { echo -e "${BLUE}[INFO]${NC} $*"; }
+warn()    { echo -e "${YELLOW}[WARN]${NC} $*"; }
+error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
 
 if [[ $EUID -eq 0 ]]; then
@@ -22,11 +22,14 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="$HOME"
 CONFIG_DIR="$HOME_DIR/.config"
-FONTS_DIR="$HOME_DIR/.fonts"
-ICONS_DIR="$HOME_DIR/.icons"
-THEMES_DIR="$HOME_DIR/.themes"
+FONTS_DIR="/usr/share/fonts"
+ICONS_DIR="/usr/share/icons"
+THEMES_DIR="/usr/share/themes"
+WALLPAPER="/usr/share/wallpaper"
 
-mkdir -p "$CONFIG_DIR" "$FONTS_DIR" "$ICONS_DIR" "$THEMES_DIR"
+# FIX: Direktori sistem memerlukan sudo
+sudo mkdir -p "$FONTS_DIR" "$ICONS_DIR" "$THEMES_DIR" "$WALLPAPER"
+mkdir -p "$CONFIG_DIR"
 
 PACKAGES_BASE=(
     # Xorg
@@ -74,6 +77,10 @@ PACKAGES_BASE=(
     xrdb
     xdg-user-dirs
     polkit-gnome
+    lightdm-gtk-greeter
+    ripgrep
+    tree-sitter
+    tree-sitter-cli
 
     # Monitoring
     lm_sensors
@@ -81,6 +88,7 @@ PACKAGES_BASE=(
     btop
     fastfetch
     playerctl
+    xrandr
 
     # Apps
     firefox
@@ -236,13 +244,19 @@ setup_pipewire() {
 dotfiles() {
     info "Copying configuration files..."
 
-    # Salin folder config
+    # Salin folder config (milik user, tidak perlu sudo)
     [[ -d "$SCRIPT_DIR/config" ]] && cp -r "$SCRIPT_DIR/config/"* "$CONFIG_DIR/"
 
-    # Font, icons, themes
-    [[ -d "$SCRIPT_DIR/fonts" ]] && cp -r "$SCRIPT_DIR/fonts/"* "$FONTS_DIR/" && fc-cache -fv "$FONTS_DIR" >/dev/null
-    [[ -d "$SCRIPT_DIR/icons" ]] && cp -r "$SCRIPT_DIR/icons/"* "$ICONS_DIR/"
-    [[ -d "$SCRIPT_DIR/themes" ]] && cp -r "$SCRIPT_DIR/themes/"* "$THEMES_DIR/"
+    # FIX: Direktori sistem memerlukan sudo
+    if [[ -d "$SCRIPT_DIR/fonts" ]]; then
+        sudo cp -r "$SCRIPT_DIR/fonts/"* "$FONTS_DIR/"
+    fi
+    if [[ -d "$SCRIPT_DIR/icons" ]]; then
+        sudo cp -r "$SCRIPT_DIR/icons/"* "$ICONS_DIR/"
+    fi
+    if [[ -d "$SCRIPT_DIR/themes" ]]; then
+        sudo cp -r "$SCRIPT_DIR/themes/"* "$THEMES_DIR/"
+    fi
 
     # Skrip tambahan
     [[ -d "$SCRIPT_DIR/other/pipewire" ]] && cp -r "$SCRIPT_DIR/other/pipewire"/* "$CONFIG_DIR/pipewire/" && chmod +x "$CONFIG_DIR/pipewire/"*
@@ -250,15 +264,97 @@ dotfiles() {
 
     # Konfigurasi sistem
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
-    [[ -d "$SCRIPT_DIR/system/sleek" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /usr/share/grub/themes/
     [[ -f "$SCRIPT_DIR/other/resolv.conf" ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf" /etc/
-    [[ -f "$SCRIPT_DIR/system/logind.conf" ]] && sudo cp -r "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
-    [[ -f "$SCRIPT_DIR/other/root" ]] && sudo cp "$SCRIPT_DIR/other/.bashrc" /root/ 2>/dev/null || true
-    
-    info "Menambahkan Konfigurasi Grub Theme..."
-    echo -e "\nGRUB_THEME=\"/usr/share/grub/themes/theme.txt\"" >> /etc/default/grub
+    [[ -f "$SCRIPT_DIR/system/elogind/logind.conf" ]] && sudo cp "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
+    [[ -d "$SCRIPT_DIR/system/wallpaper" ]] && sudo cp -r "$SCRIPT_DIR/system/wallpaper" /usr/share/t4n-os
+    [[ -f "$SCRIPT_DIR/other/.bashrc" ]] && sudo cp "$SCRIPT_DIR/other/.bashrc" /root/ 2>/dev/null || true
 
     success "Dotfiles are finished being copied and modified."
+}
+
+# ---------------------------------------------------------------------------
+# Fungsi refresh individual
+# ---------------------------------------------------------------------------
+
+refresh_fonts() {
+    info "Refreshing font cache..."
+    sudo fc-cache -fv "$FONTS_DIR" >/dev/null
+    # Juga refresh cache font user jika ada
+    fc-cache -fv "$HOME/.fonts" 2>/dev/null || true
+    success "Font cache updated."
+}
+
+refresh_icons() {
+    info "Refreshing icon cache..."
+    # Update cache tiap subdirektori di ICONS_DIR
+    for dir in "$ICONS_DIR"/*/; do
+        if [[ -d "$dir" ]]; then
+            sudo gtk-update-icon-cache -f -t "$dir" 2>/dev/null || \
+                warn "Could not update icon cache for: $dir"
+        fi
+    done
+    success "Icon cache updated."
+}
+
+refresh_themes() {
+    info "Refreshing GTK theme configuration..."
+    # Pastikan permission direktori themes sudah benar
+    sudo chmod -R a+rX "$THEMES_DIR" 2>/dev/null || true
+
+    # Terapkan tema pertama yang tersedia via gsettings (opsional)
+    if command -v gsettings >/dev/null 2>&1; then
+        local first_theme
+        first_theme=$(ls "$THEMES_DIR" 2>/dev/null | head -1)
+        if [[ -n "$first_theme" ]]; then
+            gsettings set org.gnome.desktop.interface gtk-theme "$first_theme" 2>/dev/null || \
+                warn "gsettings tidak tersedia atau schema tidak ditemukan, skip auto-apply theme."
+        fi
+    fi
+    success "Theme configuration refreshed."
+}
+
+refresh_grub() {
+    info "Regenerating GRUB configuration..."
+    if command -v update-grub >/dev/null 2>&1; then
+        sudo update-grub
+    elif command -v grub-mkconfig >/dev/null 2>&1; then
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+    else
+        warn "grub-mkconfig / update-grub not found. Update GRUB manually."
+        return 1
+    fi
+    success "GRUB configuration regenerated."
+}
+
+# ---------------------------------------------------------------------------
+
+other() {
+    info "Menambahkan konfigurasi GRUB theme..."
+
+    # Salin tema sleek ke direktori GRUB
+    if [[ -d "$SCRIPT_DIR/system/sleek" ]]; then
+        sudo mkdir -p /usr/share/grub/themes
+        sudo cp -r "$SCRIPT_DIR/system/sleek" /usr/share/grub/themes/
+    else
+        warn "Direktori tema sleek tidak ditemukan di $SCRIPT_DIR/system/sleek, skip."
+    fi
+
+    # FIX: Gunakan sudo tee, dan cek duplikasi sebelum append
+    if grep -q "GRUB_THEME" /etc/default/grub 2>/dev/null; then
+        warn "GRUB_THEME sudah ada di /etc/default/grub, melewati penambahan."
+    else
+        echo -e "\nGRUB_THEME=\"/usr/share/grub/themes/sleek/theme.txt\"" \
+            | sudo tee -a /etc/default/grub >/dev/null
+        info "GRUB_THEME ditambahkan ke /etc/default/grub."
+    fi
+
+    # Refresh fonts, icons, themes, lalu rebuild GRUB
+    refresh_fonts
+    refresh_icons
+    refresh_themes
+    refresh_grub
+
+    success "GRUB theme dan konfigurasi sistem selesai."
 }
 
 setup_services() {
@@ -346,7 +442,7 @@ EOF
 
 setup_betterlockscreen() {
     info "Setting up Betterlockscreen..."
-    local wallpaper="$HOME/.config/bspwm/wallpaper/Void.jpg"
+    local wallpaper="/usr/share/t4n-os/wallpaper/Void.jpg"
     if [[ -f "$wallpaper" ]]; then
         betterlockscreen -u "$wallpaper" --blur 0.8
     else
@@ -362,7 +458,7 @@ final_message() {
     echo ""
     echo -e "${YELLOW}‼️  LANGKAH PALING PENTING ‼️${NC}"
     echo -e "   ${CYAN}1. LOGOUT dari sesi saat ini (atau reboot).${NC}"
-    echo -e "   ${CYAN}2. LOGIN kembali agar semua perubahan grup (dbus, audio, dll)生效.${NC}"
+    echo -e "   ${CYAN}2. LOGIN kembali agar semua perubahan grup (dbus, audio, dll) berlaku.${NC}"
     echo ""
     echo -e "${BLUE}Setelah login:${NC}"
     echo -e "  • Cek D-Bus session:  ${CYAN}echo \$DBUS_SESSION_BUS_ADDRESS${NC}"
@@ -387,6 +483,7 @@ main() {
     create_user_dirs
     setup_pipewire
     dotfiles
+    other
     setup_services
     disable_services
     setup_additional

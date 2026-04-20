@@ -51,7 +51,7 @@ run_detection() {
     done
     if [[ "$battery" == "BAT0" ]] && command -v upower >/dev/null; then
         local upow=$(upower -e 2>/dev/null | grep -i battery | head -1)
-        [[ -n "$upow" ]] && battery=$(basename "$upow")
+        [[ -n "$upow" ]] && battery=$(basename "$upow" | sed 's/^battery_//')
     fi
     log "Battery: $battery"
 
