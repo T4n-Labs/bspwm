@@ -78,6 +78,9 @@ PACKAGES_BASE=(
     xdg-user-dirs
     polkit-gnome
     lightdm-gtk-greeter
+    ripgrep
+    tree-sitter
+    tree-sitter-cli
 
     # Monitoring
     lm_sensors
@@ -106,10 +109,13 @@ PACKAGES_BASE=(
 
     # Fonts
     font-awesome
+    font-awesome5
+    font-awesome6
     nerd-fonts
-    dejavu-fonts-ttf
-    noto-fonts-ttf
-    noto-fonts-cjk
+    nerd-fonts-otf
+    nerd-fonts-ttf
+    nerd-fonts-symbols-ttf
+    font-firacode
 
     # Other
     xdg-desktop-portal
