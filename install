@@ -100,26 +100,39 @@ PACKAGES_BASE=(
     xmirror
     yazi
 
-    # Theming
+    # Other
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
     lxappearance
-    papirus-icon-theme
     gtk-engine-murrine
-    arc-theme
     fontconfig
+
+    # Theme
+    arc-theme
+    tint
+
+    # Papirus
+    papirus-folders
+    papirus-icon-theme
 
     # Fonts
     font-awesome
     font-awesome5
     font-awesome6
-    nerd-fonts
-    nerd-fonts-otf
-    nerd-fonts-ttf
-    nerd-fonts-symbols-ttf
-    font-firacode
 
-    # Other
-    xdg-desktop-portal
-    xdg-desktop-portal-gtk
+    noto-fonts-cjk
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-sans-variable
+    noto-fonts-cjk-serif
+    noto-fonts-cjk-serif-variable
+    noto-fonts-cjk-variable
+    noto-fonts-emoji
+    noto-fonts-ttf
+    noto-fonts-ttf-extra
+    noto-fonts-ttf-variable
+
+    font-firacode
+    font-sarasa-gothic
 )
 
 PACKAGES_PIPEWIRE=(
@@ -269,7 +282,7 @@ dotfiles() {
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d" ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
     [[ -f "$SCRIPT_DIR/other/resolv.conf" ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf" /etc/
     [[ -f "$SCRIPT_DIR/system/elogind/logind.conf" ]] && sudo cp "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
-    [[ -d "$SCRIPT_DIR/system/wallpaper" ]] && sudo cp -r "$SCRIPT_DIR/system/wallpaper" /usr/share/t4n-os
+    [[ -f "$SCRIPT_DIR/system/wallpaper" ]] && sudo cp *.jpg "$SCRIPT_DIR/system/wallpaper" /usr/share/t4n-os/wallpaper/
     [[ -f "$SCRIPT_DIR/other/.bashrc" ]] && sudo cp "$SCRIPT_DIR/other/.bashrc" /root/ 2>/dev/null || true
 
     success "Dotfiles are finished being copied and modified."
