@@ -340,7 +340,7 @@ setup_dbus() {
 
     # dumb-runtime-dir untuk XDG_RUNTIME_DIR
     if ! command -v dumb_runtime_dir >/dev/null 2>&1; then
-        sudo xbps-install -y dumb-runtime-dir
+        sudo xbps-install -y dumb_runtime_dir
     fi
     if ! grep -q "pam_dumb_runtime_dir" /etc/pam.d/system-login 2>/dev/null; then
         echo "session optional pam_dumb_runtime_dir.so" | sudo tee -a /etc/pam.d/system-login >/dev/null
