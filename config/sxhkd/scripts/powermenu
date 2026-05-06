@@ -90,7 +90,7 @@ menu=(
   [↻   Reboot]="loginctl reboot"
   [    Suspend]="~/.config/sxhkd/scripts/powermenu-suspend"
   [    Hibernate]="loginctl hibernate"
-  [    Lock]="~/.config/bspwm/scripts/lock"
+  [    Lock]="~/.config/sxhkd/scripts/lock"
   [↪   Logout]="bspc quit"
   [    Cancel]=""
 )
