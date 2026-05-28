@@ -104,7 +104,7 @@ run_detection() {
     log "Wired: $wired"
 
     # Backup existing system.ini if any
-    [[ -f "$SYSTEM_INI" ]] && cp "$SYSTEM_INI" "$SYSTEM_INI.backup.$(date +%s)" 2>/dev/null
+    #[[ -f "$SYSTEM_INI" ]] && cp "$SYSTEM_INI" "$SYSTEM_INI.backup.$(date +%s)" 2>/dev/null
 
     # Write new system.ini
     cat > "$SYSTEM_INI" <<EOF
