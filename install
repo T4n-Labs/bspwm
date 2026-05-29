@@ -114,6 +114,7 @@ PACKAGES_BASE=(
     ripgrep
     tree-sitter
     tree-sitter-cli
+    plymouth
 
     # Monitoring
     lm_sensors
@@ -677,19 +678,23 @@ refresh_grub() {
 other() {
     info "Configuring GRUB theme..."
 
-    if [[ -d "$SCRIPT_DIR/system/sleek" ]]; then
+    if [[ -d "$SCRIPT_DIR/system/grub/sleek" ]]; then
         sudo mkdir -p /usr/share/grub/themes
-        sudo cp -r "$SCRIPT_DIR/system/sleek" /usr/share/grub/themes/
+        sudo cp -r "$SCRIPT_DIR/system/grub/sleek" /usr/share/grub/themes/
     else
-        warn "GRUB theme 'sleek' not found at $SCRIPT_DIR/system/sleek, skip."
+        warn "GRUB theme 'sleek' not found at $SCRIPT_DIR/system/grub/sleek, skip."
     fi
-
-    if grep -q "GRUB_THEME" /etc/default/grub 2>/dev/null; then
-        warn "GRUB_THEME already set in /etc/default/grub, skip."
+    
+    if [[ -d "$SCRIPT_DIR/system/plymouth/t4n" ]]; then
+        sudo mkdir -p /usr/share/plymouth/themes
+        sudo cp -r "$SCRIPT_DIR/system/grub/t4n" /usr/share/plymouth/themes/
+        sudo mkdir -p /etc/dracut.conf.d/
+        sudo cp "$SCRIPT_DIR/system/grub/plymouth.conf" /etc/dracut.conf.d/
+        sudo plymouth-set-default-theme -R t4n
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+        sudo dracut -f
     else
-        echo -e "\nGRUB_THEME=\"/usr/share/grub/themes/sleek/theme.txt\"" \
-            | sudo tee -a /etc/default/grub >/dev/null
-        info "GRUB_THEME added."
+        warn "Plymouth theme 't4n' not found at $SCRIPT_DIR/usr/share/grub/themes/t4n, skip."
     fi
 
     refresh_fonts
