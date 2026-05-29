@@ -670,31 +670,44 @@ refresh_grub() {
         warn "grub-mkconfig / update-grub not found. Update GRUB manually."
         return 1
     fi
-    success "GRUB config regenerated."
+
+    info "Regenerating initramfs..."
+    if command -v dracut >/dev/null 2>&1; then
+        sudo dracut -f
+    else
+        warn "dracut not found. Regenerate initramfs manually."
+    fi
+
+    success "GRUB config & initramfs regenerated."
 }
 
 # ---------------------------------------------------------------------------
 
 other() {
-    info "Configuring GRUB theme..."
+    info "Configuring GRUB..."
 
-    if [[ -d "$SCRIPT_DIR/system/grub/sleek" ]]; then
-        sudo mkdir -p /usr/share/grub/themes
-        sudo cp -r "$SCRIPT_DIR/system/grub/sleek" /usr/share/grub/themes/
+    if [[ -f "$SCRIPT_DIR/system/boot/grub" ]]; then
+        sudo mkdir -p /etc/default/
+        sudo cp "$SCRIPT_DIR/system/boot/grub" /etc/default/
     else
-        warn "GRUB theme 'sleek' not found at $SCRIPT_DIR/system/grub/sleek, skip."
+        warn "GRUB Config not found at $SCRIPT_DIR/system/boot/grub, skip."
     fi
-    
-    if [[ -d "$SCRIPT_DIR/system/plymouth/t4n" ]]; then
-        sudo mkdir -p /usr/share/plymouth/themes
-        sudo cp -r "$SCRIPT_DIR/system/grub/t4n" /usr/share/plymouth/themes/
-        sudo mkdir -p /etc/dracut.conf.d/
-        sudo cp "$SCRIPT_DIR/system/grub/plymouth.conf" /etc/dracut.conf.d/
-        sudo plymouth-set-default-theme -R t4n
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
-        sudo dracut -f
+
+    if [[ -d "$SCRIPT_DIR/system/boot/sleek" ]]; then
+        sudo mkdir -p /usr/share/grub/themes
+        sudo cp -r "$SCRIPT_DIR/system/boot/sleek" /usr/share/grub/themes/
     else
-        warn "Plymouth theme 't4n' not found at $SCRIPT_DIR/usr/share/grub/themes/t4n, skip."
+        warn "GRUB theme 'sleek' not found at $SCRIPT_DIR/system/boot/sleek, skip."
+    fi
+
+    if [[ -d "$SCRIPT_DIR/system/boot/t4n" ]]; then
+        sudo mkdir -p /usr/share/plymouth/themes
+        sudo cp -r "$SCRIPT_DIR/system/boot/t4n" /usr/share/plymouth/themes/
+        sudo mkdir -p /etc/dracut.conf.d/
+        sudo cp "$SCRIPT_DIR/system/boot/plymouth.conf" /etc/dracut.conf.d/
+        sudo plymouth-set-default-theme -R t4n
+    else
+        warn "Plymouth theme 't4n' not found at $SCRIPT_DIR/system/boot/t4n, skip."
     fi
 
     refresh_fonts
