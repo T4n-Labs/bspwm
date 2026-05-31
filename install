@@ -600,6 +600,14 @@ dotfiles() {
 
     [[ -d "$SCRIPT_DIR/config" ]] && cp -r "$SCRIPT_DIR/config/"* "$CONFIG_DIR/"
 
+    if [[ -d "$SCRIPT_DIR/system/gtk" ]]; then
+        cp -r "$SCRIPT_DIR/system/gtk/gtk-3.0" "$CONFIG_DIR/"
+        cp -r "$SCRIPT_DIR/system/gtk/gtk-4.0" "$CONFIG_DIR/"
+        success "GTK config copied."
+    else
+        warn "GTK config not found at $SCRIPT_DIR/system/gtk, skip."
+    fi
+
     [[ -d "$SCRIPT_DIR/fonts"  ]] && sudo cp -r "$SCRIPT_DIR/fonts/"*  "$FONTS_DIR/"
     [[ -d "$SCRIPT_DIR/icons"  ]] && sudo cp -r "$SCRIPT_DIR/icons/"*  "$ICONS_DIR/"
     [[ -d "$SCRIPT_DIR/themes" ]] && sudo cp -r "$SCRIPT_DIR/themes/"* "$THEMES_DIR/"
