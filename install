@@ -110,7 +110,7 @@ PACKAGES_BASE=(
     xrdb
     xdg-user-dirs
     polkit-gnome
-    lightdm-gtk-greeter
+    lightdm-gtk3-greeter
     ripgrep
     tree-sitter
     tree-sitter-cli
@@ -608,9 +608,12 @@ dotfiles() {
         warn "GTK config not found at $SCRIPT_DIR/system/gtk, skip."
     fi
 
+    [[ -d "$SCRIPT_DIR/system/lightdm"  ]] && sudo cp -r "$SCRIPT_DIR/system/lightdm/"*  /etc/lightdm/
+
     [[ -d "$SCRIPT_DIR/fonts"  ]] && sudo cp -r "$SCRIPT_DIR/fonts/"*  "$FONTS_DIR/"
     [[ -d "$SCRIPT_DIR/icons"  ]] && sudo cp -r "$SCRIPT_DIR/icons/"*  "$ICONS_DIR/"
     [[ -d "$SCRIPT_DIR/themes" ]] && sudo cp -r "$SCRIPT_DIR/themes/"* "$THEMES_DIR/"
+    success "Fonts, Icons & Themes config copied."
 
     if [[ -d "$SCRIPT_DIR/other/pipewire" ]]; then
         cp -r "$SCRIPT_DIR/other/pipewire"/* "$CONFIG_DIR/pipewire/"
@@ -620,8 +623,7 @@ dotfiles() {
     [[ -f "$SCRIPT_DIR/other/.bashrc"           ]] && cp  "$SCRIPT_DIR/other/.bashrc"           "$HOME_DIR/"
     [[ -d "$SCRIPT_DIR/other/xorg.conf.d"       ]] && sudo cp -r "$SCRIPT_DIR/other/xorg.conf.d" /etc/X11/
     [[ -f "$SCRIPT_DIR/other/resolv.conf"       ]] && sudo cp "$SCRIPT_DIR/other/resolv.conf"    /etc/
-    [[ -f "$SCRIPT_DIR/system/elogind/logind.conf" ]] && \
-        sudo cp "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
+    [[ -f "$SCRIPT_DIR/system/elogind/logind.conf" ]] && sudo cp "$SCRIPT_DIR/system/elogind/logind.conf" /etc/elogind/
 
     # Wallpaper
     if [[ -d "$SCRIPT_DIR/system/wallpaper" ]]; then
