@@ -16,7 +16,7 @@ pgrep -x sxhkd >/dev/null || sxhkd &
 
 ### WALLPAPER
 pgrep -x feh >/dev/null || \
-feh --no-fehbg --bg-fill "/usr/share/t4n-os/wallpaper/T4nOS.jpg" &
+feh --no-fehbg --bg-fill "$HOME/.config/bspwm/wallpaper/wallpaper4.png" &
 
 ### NOTIFICATION
 pgrep -x dunst >/dev/null || dunst &
