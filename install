@@ -98,6 +98,13 @@ PACKAGES_BASE=(
     gvfs-mtp
     thunar-archive-plugin
     thunar-media-tags-plugin
+    
+    # File Manager Utilities
+    xarchiver
+    zip
+    unzip
+    p7zip
+    unrar
 
     # Utilities
     feh
