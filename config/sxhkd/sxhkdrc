@@ -73,19 +73,19 @@ super + m
 # ==AUDIO==
 
 XF86AudioRaiseVolume
-    ~/.config/other/pipewire/volume up
+    ~/.config/pipewire/volume up
 
 XF86AudioLowerVolume
-    ~/.config/other/pipewire/volume down
+    ~/.config/pipewire/volume down
 
 XF86AudioMute
-    ~/.config/other/pipewire/volume mute
+    ~/.config/pipewire/volume mute
 
 XF86AudioMicMute
     amixer sset Capture toggle
 
 super + shift + a
-    ~/.config/other/pipewire/audio-switch
+    ~/.config/pipewire/audio-switch
 
 
 # ==BRIGHTNESS==
