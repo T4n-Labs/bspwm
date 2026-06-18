@@ -30,10 +30,6 @@ super + e
 super + w
     firefox
 
-# # Google Chrome
-# super + g
-#     google-chrome-stable
-
 # Discord
 # super + shift + d
 #     discord
