@@ -134,7 +134,6 @@ PACKAGES_BASE=(
 
     # Apps
     firefox
-    chromium
     flameshot
     galculator
     geany
