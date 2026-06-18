@@ -131,6 +131,7 @@ PACKAGES_BASE=(
     fastfetch
     playerctl
     xrandr
+    lazygit
 
     # Apps
     firefox
