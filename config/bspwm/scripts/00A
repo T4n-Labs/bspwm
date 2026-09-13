@@ -25,11 +25,16 @@ pgrep -x dunst >/dev/null || dunst &
 pgrep -x polkit-gnome-authentication-agent-1 >/dev/null || \
 /usr/libexec/polkit-gnome-authentication-agent-1 &
 
-### AUDIO fallback
+### AUDIO
 (
 sleep 1
-pgrep -x pipewire >/dev/null || pipewire
-pgrep -x wireplumber >/dev/null || wireplumber
+pkill -x wireplumber 2>/dev/null
+pkill -x pipewire-pulse 2>/dev/null
+pkill -x pipewire 2>/dev/null
+sleep 0.5
+pipewire &
+pipewire-pulse &
+wireplumber &
 ) &
 
 ### COMPOSITOR
