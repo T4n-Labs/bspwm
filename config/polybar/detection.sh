@@ -4,7 +4,18 @@
 POLYBAR_DIR="$HOME/.config/polybar"
 SYSTEM_INI="$POLYBAR_DIR/system.ini"
 LOG_FILE="$POLYBAR_DIR/auto-detect.log"
+LOCK_FILE="$POLYBAR_DIR/.detect.lock"
 mkdir -p "$POLYBAR_DIR"
+
+# Cegah dua instance detection.sh jalan/nulis system.ini barengan
+# (mis. terpicu berkali-kali oleh screenchange-reload). Kalau lagi
+# ada instance lain yang jalan, instance ini skip saja -- gak perlu
+# dobel jalan, dan yang penting: gak akan saling tabrak nulis file.
+exec 9>"$LOCK_FILE"
+if ! flock -n 9; then
+    echo "[$(date '+%H:%M:%S')] Detection already running elsewhere, skipping." >> "$LOG_FILE"
+    exit 0
+fi
 
 # Logging function
 log() {
@@ -106,8 +117,12 @@ run_detection() {
     # Backup existing system.ini if any
     #[[ -f "$SYSTEM_INI" ]] && cp "$SYSTEM_INI" "$SYSTEM_INI.backup.$(date +%s)" 2>/dev/null
 
-    # Write new system.ini
-    cat > "$SYSTEM_INI" <<EOF
+    # Write new system.ini secara atomic (tulis ke temp file dulu,
+    # baru rename). Ini mencegah polybar sempat membaca file yang
+    # setengah-jadi/corrupt kalau ada proses lain yang baca di saat
+    # bersamaan proses penulisan.
+    local tmp_file="$SYSTEM_INI.tmp.$$"
+    cat > "$tmp_file" <<EOF
 # Polybar System Configuration
 # Generated: $(date '+%Y-%m-%d %H:%M:%S')
 # Mode: $mode
@@ -121,7 +136,8 @@ network_interface_wired = $wired
 detection_date = $(date '+%Y-%m-%d %H:%M:%S')
 detection_mode = $mode
 EOF
-    chmod 644 "$SYSTEM_INI"
+    chmod 644 "$tmp_file"
+    mv -f "$tmp_file" "$SYSTEM_INI"
     log "Configuration saved to $SYSTEM_INI"
 }
 
@@ -137,8 +153,20 @@ main() {
                 # Check if file is from today
                 today=$(date '+%Y%m%d')
                 file_date=$(stat -c %y "$SYSTEM_INI" 2>/dev/null | cut -d' ' -f1 | tr -d '-')
+                # Validasi tambahan: interface yang ke-cache masih beneran
+                # ada di sistem. Sebelumnya quick check cuma percaya tanggal
+                # file, jadi kalau isinya sempat salah/corrupt (mis. gara-gara
+                # race di atas), dia dianggap "up to date" terus tanpa pernah
+                # diperbaiki otomatis sampai file-nya dihapus manual.
+                cached_wireless=$(grep '^network_interface_wireless' "$SYSTEM_INI" 2>/dev/null | cut -d'=' -f2 | tr -d ' ')
+                cached_wired=$(grep '^network_interface_wired' "$SYSTEM_INI" 2>/dev/null | cut -d'=' -f2 | tr -d ' ')
                 if [[ "$file_date" != "$today" ]]; then
                     log "Quick check: system.ini outdated, updating."
+                    run_detection "quick"
+                elif [[ -z "$cached_wireless" || -z "$cached_wired" || \
+                        ! -e "/sys/class/net/$cached_wireless" || \
+                        ! -e "/sys/class/net/$cached_wired" ]]; then
+                    log "Quick check: cached interface(s) missing/invalid ($cached_wireless / $cached_wired), forcing re-detect."
                     run_detection "quick"
                 else
                     log "Quick check: system.ini is up to date."
