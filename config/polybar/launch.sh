@@ -5,6 +5,14 @@ CONFIG_DIR="$HOME/.config/polybar"
 CONFIG="$CONFIG_DIR/config.ini"
 SYSTEM_INI="$CONFIG_DIR/system.ini"
 DETECT_SCRIPT="$CONFIG_DIR/detection.sh"
+LOCK_FILE="$CONFIG_DIR/.launch.lock"
+
+# Cegah launch.sh ke-trigger berkali-kali beruntun (mis. dari
+# screenchange-reload saat banyak event xrandr) sampai saling
+# tabrakan kill+relaunch. Instance baru nunggu instance sebelumnya
+# selesai dulu (blocking lock, bukan skip) supaya urutan tetap benar.
+exec 8>"$LOCK_FILE"
+flock 8
 
 # Kill existing polybar instances
 killall -q polybar
