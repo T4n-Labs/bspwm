@@ -84,7 +84,6 @@ PACKAGES_BASE=(
 
     # Terminal & Launcher
     alacritty
-    xfce4-terminal
     rofi
     dmenu
 
